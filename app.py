@@ -323,7 +323,7 @@ with st.sidebar:
         label_visibility="collapsed"
     )
 
-    st.markdown("<hr style='border-color:#2A2A38;margin:0.5rem 0'>", unsafe_allow_html=True)
+    st.divider()
 
     season_filter = st.selectbox("Season", list(range(2024, 2009, -1)), index=0)
     driver_filter = st.multiselect(
@@ -332,7 +332,7 @@ with st.sidebar:
         default=["HAM","VER","VET"]
     )
 
-    st.markdown("<hr style='border-color:#2A2A38;margin:0.5rem 0'>", unsafe_allow_html=True)
+    st.divider()
     st.markdown("""
     <div style='font-family: JetBrains Mono, monospace; font-size: 0.65rem; color: #6B6B82; line-height: 1.8;'>
     <span style='color:#00C87A'>●</span> Ingestion: LIVE<br>
@@ -343,7 +343,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<hr style='border-color:#2A2A38;margin:0.5rem 0'>", unsafe_allow_html=True)
+    st.divider()
     st.markdown("""
     <div style='font-family: JetBrains Mono, monospace; font-size: 0.6rem; color: #44445A; text-align:center; line-height:1.6;'>
     Built for portfolio demonstration<br>
@@ -387,47 +387,27 @@ if page == "🏠  Platform Overview":
     with c5: st.metric("Circuits", "77")
     with c6: st.metric("Pipeline SLA", "99.7%")
 
-    st.markdown("<div class='section-header'>Architecture Pipeline</div>", unsafe_allow_html=True)
+    st.markdown("#### 🔁 Architecture Pipeline")
 
-    # Architecture flow
-    arch_html = """
-    <div style='display: flex; align-items: stretch; gap: 0; margin: 1rem 0; overflow-x: auto;'>
-    """
     stages = [
-        ("SOURCE", "#2A2A38", "#6B6B82",
-         ["Ergast API", "CSV Exports", "Live Timing", "Telemetry Feed"],
-         ""),
-        ("INGESTION", "#1A1A24", "#3A8DFF",
-         ["Python Scripts", "Batch Loader", "Schema Validation", "Raw Landing"],
-         "Python"),
-        ("TRANSFORM", "#1A1A24", "#E25A1C",
-         ["Spark Jobs", "Databricks", "Deduplication", "Type Casting"],
-         "Spark"),
-        ("WAREHOUSE", "#1A1A24", "#3A8DFF",
-         ["Snowflake", "dim_drivers", "fact_results", "Marts"],
-         "Snowflake"),
-        ("BI / REPORTS", "#1A1A24", "#00C87A",
-         ["Looker Studio", "dbt Models", "Live Dashboards", "Exports"],
-         "Looker"),
+        ("📥 SOURCE",       ["Ergast API", "CSV Exports", "Live Timing", "Telemetry Feed"],      "#6B6B82"),
+        ("🐍 INGESTION",    ["Python Scripts", "Batch Loader", "Schema Validation", "Raw Landing"], "#3A8DFF"),
+        ("⚡ TRANSFORM",    ["Spark Jobs", "Databricks", "Deduplication", "Type Casting"],         "#E25A1C"),
+        ("❄️ WAREHOUSE",   ["Snowflake", "dim_drivers", "fact_results", "Marts"],                 "#3A8DFF"),
+        ("📊 BI / REPORTS", ["Looker Studio", "dbt Models", "Live Dashboards", "Exports"],         "#00C87A"),
     ]
-    for i, (label, bg, col, items, badge) in enumerate(stages):
-        arrow = "→" if i < len(stages) - 1 else ""
-        items_html = "".join(f"<div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>· {it}</div>" for it in items)
-        arch_html += f"""
-        <div style='flex:1;min-width:150px;background:{bg};border:1px solid #2A2A38;border-radius:6px;padding:1rem;'>
-          <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:{col};letter-spacing:0.12em;font-weight:700;margin-bottom:0.5rem;'>{label}</div>
-          {items_html}
-        </div>
-        """
-        if arrow:
-            arch_html += f"<div style='display:flex;align-items:center;padding:0 0.3rem;color:#2A2A38;font-size:1.5rem;'>{arrow}</div>"
-    arch_html += "</div>"
-    st.markdown(arch_html, unsafe_allow_html=True)
+    arch_cols = st.columns(len(stages))
+    for col_obj, (label, items, color) in zip(arch_cols, stages):
+        with col_obj:
+            st.markdown(f"**:{color.replace('#','')} {label}**" if False else f"**{label}**")
+            for item in items:
+                st.caption(f"· {item}")
 
     col1, col2 = st.columns([3, 2])
 
     with col1:
-        st.markdown("<div class='section-header'>Table Inventory — Warehouse Layer</div>", unsafe_allow_html=True)
+        st.markdown('---')
+        st.markdown('**Table Inventory — Warehouse Layer**')
         tables = pd.DataFrame([
             {"Table": "fact_race_results",   "Layer": "Fact",      "Rows": "520,000",   "Grain": "race + driver",    "Updated": "2h ago"},
             {"Table": "fact_lap_times",      "Layer": "Fact",      "Rows": "4,280,000", "Grain": "race + driver + lap","Updated":"2h ago"},
@@ -450,31 +430,23 @@ if page == "🏠  Platform Overview":
         )
 
     with col2:
-        st.markdown("<div class='section-header'>Technology Stack</div>", unsafe_allow_html=True)
+        st.markdown("**Technology Stack**")
         stack_items = [
-            ("Python 3.11", "Ingestion & orchestration", "#FFD844"),
-            ("Apache Spark 3.4", "Distributed transforms", "#E25A1C"),
-            ("Databricks", "Cluster compute platform", "#FF3621"),
-            ("Snowflake", "Cloud data warehouse", "#3A8DFF"),
-            ("dbt Core", "SQL transformations & docs", "#FF6B6B"),
-            ("Looker Studio", "BI dashboards & delivery", "#00C87A"),
-            ("Delta Lake", "ACID storage format", "#E25A1C"),
-            ("Airflow", "Pipeline orchestration", "#017CEE"),
+            ("🐍 Python 3.11",       "Ingestion & orchestration"),
+            ("⚡ Apache Spark 3.4",  "Distributed transforms"),
+            ("🧱 Databricks",        "Cluster compute platform"),
+            ("❄️ Snowflake",         "Cloud data warehouse"),
+            ("🔧 dbt Core",          "SQL transformations & docs"),
+            ("📊 Looker Studio",     "BI dashboards & delivery"),
+            ("🗄️ Delta Lake",        "ACID storage format"),
+            ("🌀 Airflow",           "Pipeline orchestration"),
         ]
-        for tech, desc, color in stack_items:
-            st.markdown(f"""
-            <div style='display:flex;align-items:center;gap:0.75rem;padding:0.45rem 0.75rem;
-                        background:#1A1A24;border:1px solid #2A2A38;border-radius:4px;margin-bottom:0.3rem;'>
-              <div style='width:3px;height:2rem;background:{color};border-radius:2px;flex-shrink:0;'></div>
-              <div>
-                <div style='font-family:JetBrains Mono,monospace;font-size:0.75rem;color:#E8E8F0;'>{tech}</div>
-                <div style='font-family:Inter,sans-serif;font-size:0.65rem;color:#6B6B82;'>{desc}</div>
-              </div>
-            </div>
-            """, unsafe_allow_html=True)
+        stack_df = pd.DataFrame(stack_items, columns=["Technology", "Role"])
+        st.dataframe(stack_df, use_container_width=True, hide_index=True)
 
     # Recent pipeline runs
-    st.markdown("<div class='section-header'>Recent Pipeline Executions</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**Recent Pipeline Executions**')
     runs = pd.DataFrame([
         {"Run ID": "dag_f1_2024_r0041", "Triggered": "2024-01-15 08:00", "Duration": "6m 32s", "Records": "5.4M", "Status": "✅ SUCCESS"},
         {"Run ID": "dag_f1_2024_r0040", "Triggered": "2024-01-14 08:00", "Duration": "6m 18s", "Records": "5.4M", "Status": "✅ SUCCESS"},
@@ -506,7 +478,8 @@ elif page == "🔌  Ingestion Layer":
 
     col1, col2 = st.columns([1, 1])
     with col1:
-        st.markdown("<div class='section-header'>Live Pipeline Run</div>", unsafe_allow_html=True)
+        st.markdown('---')
+        st.markdown('**Live Pipeline Run**')
         if st.button("▶  RUN INGESTION PIPELINE"):
             steps = [
                 ("Connecting to Ergast API...", 0.4),
@@ -533,41 +506,35 @@ elif page == "🔌  Ingestion Layer":
             st.success("✅ Ingestion complete — 5,440,000 rows processed")
 
     with col2:
-        st.markdown("<div class='section-header'>Ingestion Log — Latest Run</div>", unsafe_allow_html=True)
+        st.markdown('---')
+        st.markdown('**Ingestion Log — Latest Run**')
         st.dataframe(
             log_df.rename(columns={"timestamp":"Timestamp","table":"Table","layer":"Layer","rows":"Rows","status":"Status"}),
             use_container_width=True, hide_index=True,
             column_config={"Rows": st.column_config.NumberColumn(format="%d")}
         )
 
-    st.markdown("<div class='section-header'>Source Schema — fact_race_results (sample)</div>", unsafe_allow_html=True)
-    schema_cols = st.columns(3)
+    st.markdown("**Source Schema — fact_race_results**")
     schema = [
-        ("race_id", "INTEGER", "PK — Unique race identifier"),
-        ("season", "SMALLINT", "Championship year"),
-        ("round", "TINYINT", "Race number in season"),
-        ("circuit_id", "INTEGER", "FK → dim_circuits"),
-        ("driver_id", "INTEGER", "FK → dim_drivers"),
-        ("constructor_id", "INTEGER", "FK → dim_constructors"),
-        ("grid_position", "TINYINT", "Starting grid slot"),
-        ("finish_position", "TINYINT", "Final race position"),
-        ("points", "FLOAT", "Championship points awarded"),
-        ("laps_completed", "TINYINT", "Laps before finish/DNF"),
-        ("status", "VARCHAR(32)", "Finished / DNF / +N Lap"),
-        ("fastest_lap_time", "FLOAT", "Fastest lap in seconds"),
+        ("race_id",           "INTEGER",    "PK — Unique race identifier"),
+        ("season",            "SMALLINT",   "Championship year"),
+        ("round",             "TINYINT",    "Race number in season"),
+        ("circuit_id",        "INTEGER",    "FK → dim_circuits"),
+        ("driver_id",         "INTEGER",    "FK → dim_drivers"),
+        ("constructor_id",    "INTEGER",    "FK → dim_constructors"),
+        ("grid_position",     "TINYINT",    "Starting grid slot"),
+        ("finish_position",   "TINYINT",    "Final race position"),
+        ("points",            "FLOAT",      "Championship points awarded"),
+        ("laps_completed",    "TINYINT",    "Laps before finish/DNF"),
+        ("status",            "VARCHAR(32)","Finished / DNF / +N Lap"),
+        ("fastest_lap_time",  "FLOAT",      "Fastest lap in seconds"),
     ]
-    for i, (col, dtype, desc) in enumerate(schema):
-        with schema_cols[i % 3]:
-            st.markdown(f"""
-            <div style='background:#1A1A24;border:1px solid #2A2A38;border-radius:4px;padding:0.5rem 0.75rem;margin-bottom:0.35rem;'>
-              <div style='font-family:JetBrains Mono,monospace;font-size:0.75rem;color:#E8E8F0;'>{col}</div>
-              <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#3A8DFF;'>{dtype}</div>
-              <div style='font-family:Inter,sans-serif;font-size:0.65rem;color:#6B6B82;margin-top:0.1rem;'>{desc}</div>
-            </div>
-            """, unsafe_allow_html=True)
+    schema_df = pd.DataFrame(schema, columns=["Column", "Type", "Description"])
+    st.dataframe(schema_df, use_container_width=True, hide_index=True)
 
     # Data quality checks
-    st.markdown("<div class='section-header'>Data Quality Checks</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**Data Quality Checks**')
     dq = pd.DataFrame([
         {"Check": "NULL driver_id in race_results",   "Expectation": "= 0",   "Actual": "0",      "Pass": "✅"},
         {"Check": "position range [1,20]",            "Expectation": "100%",  "Actual": "100%",   "Pass": "✅"},
@@ -602,7 +569,8 @@ elif page == "⚡  Spark Transforms":
     tab1, tab2, tab3 = st.tabs(["JOB EXECUTION", "TRANSFORMATION CODE", "CLUSTER METRICS"])
 
     with tab1:
-        st.markdown("<div class='section-header'>Spark Job DAG</div>", unsafe_allow_html=True)
+        st.markdown('---')
+        st.markdown('**Spark Job DAG**')
         jobs = [
             ("Stage 1", "raw_ingest_races",        "COMPLETE", "0:42",  "150K",   8),
             ("Stage 2", "raw_ingest_lap_times",     "COMPLETE", "1:18",  "4.28M",  24),
@@ -613,25 +581,12 @@ elif page == "⚡  Spark Transforms":
             ("Stage 7", "write_delta_fact_results", "COMPLETE", "0:31",  "520K",   8),
             ("Stage 8", "write_delta_lap_times",    "COMPLETE", "1:02",  "4.28M",  32),
         ]
-        for stage, name, status, dur, rows, tasks in jobs:
-            pct = 100
-            col = "#00C87A"
-            st.markdown(f"""
-            <div style='display:flex;align-items:center;gap:1rem;padding:0.5rem 0.75rem;
-                        background:#1A1A24;border:1px solid #2A2A38;border-radius:4px;margin-bottom:0.3rem;'>
-              <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;width:55px;'>{stage}</div>
-              <div style='font-family:JetBrains Mono,monospace;font-size:0.75rem;color:#E8E8F0;flex:1;'>{name}</div>
-              <div style='width:120px;background:#0A0A0F;border-radius:2px;height:6px;'>
-                <div style='width:{pct}%;background:{col};height:6px;border-radius:2px;'></div>
-              </div>
-              <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;width:40px;text-align:right;'>{dur}</div>
-              <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;width:50px;text-align:right;'>{rows}</div>
-              <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:{col};width:70px;text-align:right;'>{status}</div>
-            </div>
-            """, unsafe_allow_html=True)
+        jobs_df = pd.DataFrame(jobs, columns=["Stage", "Job Name", "Status", "Duration", "Records", "Tasks"])
+        st.dataframe(jobs_df, use_container_width=True, hide_index=True)
 
     with tab2:
-        st.markdown("<div class='section-header'>Transformation Logic — Python + PySpark</div>", unsafe_allow_html=True)
+        st.markdown('---')
+        st.markdown('**Transformation Logic — Python + PySpark**')
         code_snippets = {
             "01_ingest_raw.py": """from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, to_date, trim, upper
@@ -728,7 +683,8 @@ def load_to_snowflake(df, table: str, schema: str = "ANALYTICS") -> None:
 
     with tab3:
         # Simulated cluster metrics chart
-        st.markdown("<div class='section-header'>Cluster Resource Utilisation</div>", unsafe_allow_html=True)
+        st.markdown('---')
+        st.markdown('**Cluster Resource Utilisation**')
         mins = list(range(0, 8))
         cpu  = [12, 45, 88, 92, 85, 78, 62, 15]
         mem  = [30, 55, 70, 72, 68, 65, 60, 32]
@@ -763,82 +719,54 @@ elif page == "❄️  Warehouse Model":
     tab1, tab2 = st.tabs(["SCHEMA DIAGRAM", "DBT MODELS"])
 
     with tab1:
-        st.markdown("<div class='section-header'>Star Schema — F1_ANALYTICS Database</div>", unsafe_allow_html=True)
+        st.markdown("**Star Schema — F1_ANALYTICS Database**")
 
-        # Draw ER-like diagram using HTML
-        er_html = """
-        <div style='overflow-x:auto; padding: 1rem 0;'>
-        <div style='display:grid;grid-template-columns:200px 280px 200px;grid-template-rows:auto auto auto;gap:1rem;min-width:720px;align-items:center;'>
+        # Dimensions row
+        d1, d2, d3, d4 = st.columns(4)
+        dim_tables = [
+            ("DIM_CIRCUITS",      ["🔑 circuit_id", "circuit_name", "country", "location", "lat / lng"]),
+            ("DIM_DRIVERS",       ["🔑 driver_id", "code (3-char)", "forename / surname", "nationality", "dob"]),
+            ("DIM_SEASONS",       ["🔑 season_year", "total_races", "rule_era", "engine_era", "url"]),
+            ("DIM_CONSTRUCTORS",  ["🔑 constructor_id", "name", "nationality", "first_entry_year", "championships_won"]),
+        ]
+        for col_obj, (tname, tcols) in zip([d1, d2, d3, d4], dim_tables):
+            with col_obj:
+                st.markdown(f"**{tname}**")
+                for c in tcols:
+                    st.caption(c)
 
-          <!-- dim_circuits -->
-          <div style='background:#1A1A24;border:1px solid #3A8DFF44;border-radius:6px;padding:0.75rem;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#3A8DFF;margin-bottom:0.4rem;letter-spacing:0.1em;'>DIM_CIRCUITS</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>
-              🔑 circuit_id<br>circuit_name<br>country<br>location<br>lat / lng
-            </div>
-          </div>
+        st.markdown("---")
+        f1, f2 = st.columns([2, 1])
+        with f1:
+            st.markdown("**🏁 FACT_RACE_RESULTS** *(central fact table)*")
+            fact_cols = ["🔑 result_id", "🔗 race_id", "🔗 driver_id", "🔗 constructor_id", "🔗 circuit_id",
+                         "grid_position", "finish_position", "points", "laps_completed", "status", "fastest_lap_ms", "pit_stops", "time_ms"]
+            cols_a, cols_b = st.columns(2)
+            for i, c in enumerate(fact_cols):
+                (cols_a if i % 2 == 0 else cols_b).caption(c)
+        with f2:
+            st.markdown("**📦 FACT_LAP_TIMES**")
+            for c in ["🔑 lap_id", "🔗 race_id", "🔗 driver_id", "lap_number", "lap_time_ms", "sector1_ms", "sector2_ms", "sector3_ms"]:
+                st.caption(c)
 
-          <!-- fact_race_results (center) -->
-          <div style='background:#1A1A24;border:2px solid #E10600;border-radius:6px;padding:0.75rem;grid-row:1/3;grid-column:2;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#E10600;margin-bottom:0.4rem;letter-spacing:0.1em;'>FACT_RACE_RESULTS</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>
-              🔑 result_id<br>
-              🔗 race_id<br>🔗 driver_id<br>🔗 constructor_id<br>🔗 circuit_id<br>
-              ──────────<br>
-              grid_position<br>finish_position<br>points<br>laps_completed<br>status<br>fastest_lap_ms<br>pit_stops<br>time_ms
-            </div>
-          </div>
-
-          <!-- dim_drivers -->
-          <div style='background:#1A1A24;border:1px solid #3A8DFF44;border-radius:6px;padding:0.75rem;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#3A8DFF;margin-bottom:0.4rem;letter-spacing:0.1em;'>DIM_DRIVERS</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>
-              🔑 driver_id<br>code (3-char)<br>forename / surname<br>nationality<br>dob<br>permanent_number
-            </div>
-          </div>
-
-          <!-- dim_seasons -->
-          <div style='background:#1A1A24;border:1px solid #3A8DFF44;border-radius:6px;padding:0.75rem;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#3A8DFF;margin-bottom:0.4rem;letter-spacing:0.1em;'>DIM_SEASONS</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>
-              🔑 season_year<br>total_races<br>rule_era<br>engine_era<br>url
-            </div>
-          </div>
-
-          <!-- dim_constructors -->
-          <div style='background:#1A1A24;border:1px solid #3A8DFF44;border-radius:6px;padding:0.75rem;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#3A8DFF;margin-bottom:0.4rem;letter-spacing:0.1em;'>DIM_CONSTRUCTORS</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>
-              🔑 constructor_id<br>name<br>nationality<br>first_entry_year<br>championships_won
-            </div>
-          </div>
-
-        </div>
-
-        <div style='margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap;'>
-          <div style='background:#1A1A24;border:1px solid #00C87A44;border-radius:6px;padding:0.75rem;min-width:180px;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#00C87A;margin-bottom:0.4rem;letter-spacing:0.1em;'>MART_SEASON_STANDINGS</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>season · driver · total_pts<br>season_rank · wins · podiums</div>
-          </div>
-          <div style='background:#1A1A24;border:1px solid #00C87A44;border-radius:6px;padding:0.75rem;min-width:180px;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#00C87A;margin-bottom:0.4rem;letter-spacing:0.1em;'>MART_DRIVER_CAREER</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>driver · seasons · races<br>wins · podiums · championships</div>
-          </div>
-          <div style='background:#1A1A24;border:1px solid #00C87A44;border-radius:6px;padding:0.75rem;min-width:180px;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#00C87A;margin-bottom:0.4rem;letter-spacing:0.1em;'>MART_LAP_PERFORMANCE</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>driver · race · avg_lap_ms<br>fastest_lap · consistency_pct</div>
-          </div>
-          <div style='background:#1A1A24;border:1px solid #00C87A44;border-radius:6px;padding:0.75rem;min-width:180px;'>
-            <div style='font-family:Orbitron,monospace;font-size:0.65rem;color:#00C87A;margin-bottom:0.4rem;letter-spacing:0.1em;'>MART_CONSTRUCTOR_TREND</div>
-            <div style='font-family:JetBrains Mono,monospace;font-size:0.65rem;color:#6B6B82;line-height:1.8;'>constructor · season<br>pts · rank · yoy_delta</div>
-          </div>
-        </div>
-        </div>
-        """
-        st.markdown(er_html, unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("**📊 Data Marts**")
+        m1, m2, m3, m4 = st.columns(4)
+        marts = [
+            ("MART_SEASON_STANDINGS",  ["season", "driver", "total_pts", "season_rank", "wins", "podiums"]),
+            ("MART_DRIVER_CAREER",     ["driver", "seasons", "races", "wins", "podiums", "championships"]),
+            ("MART_LAP_PERFORMANCE",   ["driver", "race", "avg_lap_ms", "fastest_lap", "consistency_pct"]),
+            ("MART_CONSTRUCTOR_TREND", ["constructor", "season", "pts", "rank", "yoy_delta"]),
+        ]
+        for col_obj, (mname, mcols) in zip([m1, m2, m3, m4], marts):
+            with col_obj:
+                st.markdown(f"**{mname}**")
+                for c in mcols:
+                    st.caption(f"· {c}")
 
     with tab2:
-        st.markdown("<div class='section-header'>dbt Model SQL — mart_season_standings</div>", unsafe_allow_html=True)
+        st.markdown('---')
+        st.markdown('**dbt Model SQL — mart_season_standings**')
         st.code("""-- models/marts/mart_season_standings.sql
 -- @description: Season-level driver standings with cumulative metrics
 -- @materialization: incremental (unique_key = season || '_' || driver_id)
@@ -941,7 +869,8 @@ elif page == "📊  BI Dashboards":
         st.plotly_chart(fig2, use_container_width=True)
 
     # Multi-season trend
-    st.markdown("<div class='section-header'>Championship Points — Multi-Season Trend</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**Championship Points — Multi-Season Trend**')
     trend_df = standings_df[standings_df["driver_code"].isin(driver_filter)]
     fig3 = go.Figure()
     for i, d in enumerate(driver_filter):
@@ -982,7 +911,8 @@ elif page == "🏆  Driver Analytics":
     career["win_rate"] = (career["wins"] / career["races"] * 100).round(1)
     career.columns = ["Code","Driver","Last Team","Races","Wins","Podiums","Points","Avg Pos","Win %"]
 
-    st.markdown("<div class='section-header'>All-Time Career Rankings</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**All-Time Career Rankings**')
     st.dataframe(career, use_container_width=True, hide_index=True,
                  column_config={
                      "Points": st.column_config.ProgressColumn(format="%d", min_value=0, max_value=int(career["Points"].max())),
@@ -1011,7 +941,8 @@ elif page == "🏆  Driver Analytics":
         st.plotly_chart(fig2, use_container_width=True)
 
     # Radar / spider for top 3
-    st.markdown("<div class='section-header'>Performance Radar — Top 3 Drivers</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**Performance Radar — Top 3 Drivers**')
     metrics = ["Wins", "Podiums", "Points", "Races", "Win %"]
     fig3 = go.Figure()
     for i, row in career.head(3).iterrows():
@@ -1086,7 +1017,8 @@ elif page == "🔧  Constructor Intel":
         st.plotly_chart(fig2, use_container_width=True)
 
     # Dominance heatmap
-    st.markdown("<div class='section-header'>Season Rank Heatmap — Top 5 Teams</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**Season Rank Heatmap — Top 5 Teams**')
     pivot = constructors_df[constructors_df["team"].isin(top_teams)].pivot_table(
         index="team", columns="season", values="points", aggfunc="sum"
     ).fillna(0)
@@ -1147,7 +1079,8 @@ elif page == "⏱️  Lap Performance":
         st.plotly_chart(fig2, use_container_width=True)
 
     # Sector breakdown
-    st.markdown("<div class='section-header'>Average Sector Times by Driver</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**Average Sector Times by Driver**')
     sector_agg = lap_season.groupby("driver_code")[["sector1","sector2","sector3"]].mean().reset_index()
     fig3 = go.Figure()
     for j, sec in enumerate(["sector1","sector2","sector3"]):
@@ -1160,7 +1093,8 @@ elif page == "⏱️  Lap Performance":
     st.plotly_chart(fig3, use_container_width=True)
 
     # Consistency metric
-    st.markdown("<div class='section-header'>Lap-Time Consistency Index (lower = more consistent)</div>", unsafe_allow_html=True)
+    st.markdown('---')
+    st.markdown('**Lap-Time Consistency Index (lower = more consistent)**')
     consistency = lap_season.groupby("driver_code")["lap_time"].std().reset_index()
     consistency.columns = ["Driver", "Std Dev (s)"]
     consistency = consistency.sort_values("Std Dev (s)")
